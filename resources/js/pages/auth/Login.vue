@@ -1,22 +1,36 @@
 <script setup lang="ts">
-import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController'
+import { ref } from 'vue'
 import InputError from '@/components/InputError.vue'
 import TextLink from '@/components/TextLink.vue'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { register } from '@/routes'
 import { request } from '@/routes/password'
-import { Form, Head } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
 import { LoaderCircle } from 'lucide-vue-next'
 import TopBar from '@/components/TopBar.vue'
 import Footer from '@/components/Footer.vue'
+import { loginToken } from '@/api/auth'
 
-defineProps<{
-  status?: string
-  canResetPassword: boolean
-}>()
+defineProps<{ status?: string; canResetPassword: boolean }>()
+
+const email = ref('')
+const password = ref('')
+const processing = ref(false)
+const errorMsg = ref<string | null>(null)
+
+async function onSubmit() {
+  errorMsg.value = null
+  processing.value = true
+  try {
+    await loginToken(email.value, password.value)
+    router.visit('/dashboard')
+  } catch (e: any) {
+    errorMsg.value = 'E-mail ou senha incorretos.'
+  } finally {
+    processing.value = false
+  }
+}
 </script>
 
 <template>
@@ -46,24 +60,16 @@ defineProps<{
             <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
               {{ status }}
             </div>
-
-            <Form
-              v-bind="AuthenticatedSessionController.store.form()"
-              :reset-on-success="['password']"
-              v-slot="{ errors, processing }"
-              class="flex flex-col gap-6"
-            >
-              <div
-                v-if="errors.email || errors.password || errors.credentials || errors.message"
-                class="rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700"
-              >
-                E-mail ou senha incorretos.
+            <form @submit.prevent="onSubmit" class="flex flex-col gap-6">
+              <div v-if="errorMsg" class="rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {{ errorMsg }}
               </div>
 
               <div class="grid gap-4 sm:gap-6">
                 <div class="grid gap-2">
                   <Input
                     id="email"
+                    v-model="email"
                     type="email"
                     name="email"
                     required
@@ -84,6 +90,7 @@ defineProps<{
                   </div>
                   <Input
                     id="password"
+                    v-model="password"
                     type="password"
                     name="password"
                     required
@@ -95,13 +102,8 @@ defineProps<{
                   <InputError :message="undefined" />
                 </div>
 
-                <Button
-                  type="submit"
-                  class="mt-2 w-full bg-[#153B4E] hover:bg-[#0e2a3a]"
-                  :tabindex="4"
-                  :disabled="processing"
-                >
-                  <LoaderCircle v-if="processing" class="h-4 w-4 mr-2" />
+                <Button type="submit" class="mt-2 w-full bg-[#153B4E] hover:bg-[#0e2a3a]" :tabindex="4" :disabled="processing">
+                  <LoaderCircle v-if="processing" class="h-4 w-4 mr-2 animate-spin" />
                   Logar
                 </Button>
               </div>
@@ -110,7 +112,7 @@ defineProps<{
                 Não tem conta?
                 <TextLink :href="register()" :tabindex="5">Criar conta</TextLink>
               </div>
-            </Form>
+            </form>
           </div>
         </div>
       </main>
