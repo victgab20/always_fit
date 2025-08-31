@@ -9,10 +9,13 @@ import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { Form, Head } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
+import TopBar  from '@/components/TopBar.vue'
+import Footer from '@/components/Footer.vue'
 </script>
 
 <template>
-    <AuthBase title="Create an account" description="Enter your details below to create your account">
+    <TopBar />
+    <AuthBase title="Criar a conta" description="Adicione seus dados para criar sua conta.">
         <Head title="Register" />
 
         <Form
@@ -66,4 +69,5 @@ import { LoaderCircle } from 'lucide-vue-next';
             </div>
         </Form>
     </AuthBase>
+    <Footer />
 </template>

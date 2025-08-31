@@ -1,87 +1,120 @@
 <script setup lang="ts">
-import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController';
-import InputError from '@/components/InputError.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AuthBase from '@/layouts/AuthLayout.vue';
-import { register } from '@/routes';
-import { request } from '@/routes/password';
-import { Form, Head } from '@inertiajs/vue3';
-import { LoaderCircle } from 'lucide-vue-next';
+import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController'
+import InputError from '@/components/InputError.vue'
+import TextLink from '@/components/TextLink.vue'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { register } from '@/routes'
+import { request } from '@/routes/password'
+import { Form, Head } from '@inertiajs/vue3'
+import { LoaderCircle } from 'lucide-vue-next'
+import TopBar from '@/components/TopBar.vue'
+import Footer from '@/components/Footer.vue'
 
 defineProps<{
-    status?: string;
-    canResetPassword: boolean;
-}>();
+  status?: string
+  canResetPassword: boolean
+}>()
 </script>
 
 <template>
-    <AuthBase title="Log in to your account" description="Enter your email and password below to log in">
-        <Head title="Log in" />
+  <Head title="Login">
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  </Head>
 
-        <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
-            {{ status }}
-        </div>
+  <TopBar />
 
-        <Form
-            v-bind="AuthenticatedSessionController.store.form()"
-            :reset-on-success="['password']"
-            v-slot="{ errors, processing }"
-            class="flex flex-col gap-6"
-        >
-            <div class="grid gap-6">
+  <div class="flex min-h-screen bg-[#FDFDFC] text-[#1b1b18]">
+    <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 grid place-items-center">
+      <main class="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl">
+        <div class="rounded-xl shadow-lg bg-[#F6F6FA] w-full">
+          <div class="p-4 sm:p-6 md:p-8">
+            <div class="mb-6 flex items-center justify-center">
+              <img src="/way_fit_logo.svg" alt="AlwaysFit" class="h-9 mr-2" />
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-center mb-6 sm:mb-10">Login</h1>
+
+            <p class="mb-2 font-bold">Olá!</p>
+            <p class="text-sm">Este é o ambiente seguro de login da Always Fit ®</p>
+
+            <p class="mt-8 sm:mt-10 mb-2 font-bold">Para acessar, informe suas credenciais.</p>
+
+            <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
+              {{ status }}
+            </div>
+
+            <Form
+              v-bind="AuthenticatedSessionController.store.form()"
+              :reset-on-success="['password']"
+              v-slot="{ errors, processing }"
+              class="flex flex-col gap-6"
+            >
+              <div
+                v-if="errors.email || errors.password || errors.credentials || errors.message"
+                class="rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700"
+              >
+                E-mail ou senha incorretos.
+              </div>
+
+              <div class="grid gap-4 sm:gap-6">
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        name="email"
-                        required
-                        autofocus
-                        :tabindex="1"
-                        autocomplete="email"
-                        placeholder="email@example.com"
-                    />
-                    <InputError :message="errors.email" />
+                  <Input
+                    id="email"
+                    type="email"
+                    name="email"
+                    required
+                    autofocus
+                    :tabindex="1"
+                    autocomplete="email"
+                    placeholder="E-mail"
+                    class="w-full bg-[#FDFDFC] border-2 border-black"
+                  />
+                  <InputError :message="undefined" />
                 </div>
 
                 <div class="grid gap-2">
-                    <div class="flex items-center justify-between">
-                        <Label for="password">Password</Label>
-                        <TextLink v-if="canResetPassword" :href="request()" class="text-sm" :tabindex="5"> Forgot password? </TextLink>
-                    </div>
-                    <Input
-                        id="password"
-                        type="password"
-                        name="password"
-                        required
-                        :tabindex="2"
-                        autocomplete="current-password"
-                        placeholder="Password"
-                    />
-                    <InputError :message="errors.password" />
+                  <div class="flex justify-end">
+                    <TextLink v-if="canResetPassword" :href="request()" class="text-sm" :tabindex="5">
+                      Esqueceu a senha?
+                    </TextLink>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    name="password"
+                    required
+                    :tabindex="2"
+                    autocomplete="current-password"
+                    placeholder="Senha"
+                    class="w-full bg-[#FDFDFC] border-2 border-black"
+                  />
+                  <InputError :message="undefined" />
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <Label for="remember" class="flex items-center space-x-3">
-                        <Checkbox id="remember" name="remember" :tabindex="3" />
-                        <span>Remember me</span>
-                    </Label>
-                </div>
-
-                <Button type="submit" class="mt-4 w-full" :tabindex="4" :disabled="processing">
-                    <LoaderCircle v-if="processing" class="h-4 w-4 animate-spin" />
-                    Log in
+                <Button
+                  type="submit"
+                  class="mt-2 w-full bg-[#153B4E] hover:bg-[#0e2a3a]"
+                  :tabindex="4"
+                  :disabled="processing"
+                >
+                  <LoaderCircle v-if="processing" class="h-4 w-4 mr-2" />
+                  Logar
                 </Button>
-            </div>
+              </div>
 
-            <div class="text-center text-sm text-muted-foreground">
-                Don't have an account?
-                <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
-            </div>
-        </Form>
-    </AuthBase>
+              <div class="text-center text-sm text-muted-foreground mt-2">
+                Não tem conta?
+                <TextLink :href="register()" :tabindex="5">Criar conta</TextLink>
+              </div>
+            </Form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <Footer />
 </template>
