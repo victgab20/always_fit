@@ -16,7 +16,7 @@ const pct      = computed(() => Math.min(100, Math.round((props.ex.feitos / prop
       <p class="text-slate-700 -mt-1">{{ ex.subtitulo }}</p>
     </div>
 
-    <img :src="ex.img" alt="" class="h-36 mx-auto my-4 object-contain" />
+    <img :src="ex.img ?? '/supino.png'" alt="" class="h-36 mx-auto my-4 object-contain" />
 
     <div class="flex items-center justify-between mb-3">
       <span class="text-sm">Realizado?</span>
