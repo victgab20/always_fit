@@ -9,18 +9,18 @@ Route::get('/', function () {
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware('auth:sanctum')->name('dashboard');
 
 Route::get('nutricao', function () {
     return Inertia::render('Nutricao');
-})->middleware(['auth', 'verified'])->name('nutricao');
+})->middleware('auth:sanctum')->name('nutricao');
 
 Route::get('progresso', function () {
     return Inertia::render('Progresso');
-})->middleware(['auth', 'verified'])->name('progresso');
+})->middleware('auth:sanctum')->name('progresso');
 Route::get('treinos', function () {
     return Inertia::render('Treinos');
-})->middleware(['auth', 'verified'])->name('treinos');
+})->middleware('auth:sanctum')->name('treinos');
 
 
 require __DIR__.'/settings.php';
