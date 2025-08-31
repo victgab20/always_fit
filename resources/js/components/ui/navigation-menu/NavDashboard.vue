@@ -3,9 +3,10 @@ import { User } from '@/types'
 import { Link, router } from '@inertiajs/vue3'
 import { logout } from '@/routes'
 import { LogOut, ArrowLeft } from 'lucide-vue-next'
+import {logoutToken} from '@/api/auth'
 
 interface Props { user: User, pageTitle?: string }
-const handleLogout = () => router.flushAll()
+const handleLogout = () => logoutToken().then(() => router.visit('/'))
 const handleClick = () => router.visit('/dashboard')
 defineProps<Props>()
 </script>
